@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(rt2_assignment1)
+project(rt2_assignment2)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -108,7 +108,7 @@ add_action_files(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES rt2_assignment1
+#  LIBRARIES rt2_assignment2
 #  CATKIN_DEPENDS roscpp rospy
 #  DEPENDS system_lib
 )
@@ -126,7 +126,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/rt2_assignment1.cpp
+#   src/${PROJECT_NAME}/rt2_assignment2.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -137,8 +137,8 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
- add_executable(position_service src/position_service.cpp)
- add_executable(state_machine src/state_machine.cpp)
+ add_executable(position_service_ src/position_service.cpp)
+ add_executable(state_machine_ src/state_machine.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -148,15 +148,15 @@ include_directories(
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
- add_dependencies(position_service ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
- add_dependencies(state_machine ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+ add_dependencies(position_service_ ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+ add_dependencies(state_machine_ ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
  
 ## Specify libraries to link a library or executable target against
- target_link_libraries(position_service
+ target_link_libraries(position_service_
    ${catkin_LIBRARIES}
  )
  
- target_link_libraries(state_machine
+ target_link_libraries(state_machine_
    ${catkin_LIBRARIES}
  )
 
@@ -207,7 +207,7 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_rt2_assignment1.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_rt2_assignment2.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

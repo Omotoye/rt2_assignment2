@@ -6,7 +6,7 @@ from geometry_msgs.msg import Twist, Point
 from nav_msgs.msg import Odometry
 from tf import transformations
 import actionlib
-import rt2_assignment1.msg
+import rt2_assignment2.msg
 import math
 
 # robot state variables
@@ -29,8 +29,8 @@ lb_a = -0.5
 ub_d = 0.6
 
 # create messages that are used to publish feedback/result
-_feedback = rt2_assignment1.msg.PositionFeedback()
-_result = rt2_assignment1.msg.PositionResult()
+_feedback = rt2_assignment2.msg.PositionFeedback()
+_result = rt2_assignment2.msg.PositionResult()
 
 
 def check_preempt():
@@ -180,7 +180,7 @@ def main():
     pub_ = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
     sub_odom = rospy.Subscriber('/odom', Odometry, clbk_odom)
     _as = actionlib.SimpleActionServer(
-        'go_to_point', rt2_assignment1.msg.PositionAction, execute_cb=go_to_point, auto_start=False)
+        'go_to_point', rt2_assignment2.msg.PositionAction, execute_cb=go_to_point, auto_start=False)
     _as.start()
     rospy.spin()
 

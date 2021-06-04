@@ -1,14 +1,14 @@
 #include "ros/ros.h"
-#include "rt2_assignment1/Command.h"
-#include "rt2_assignment1/Position.h"
-#include "rt2_assignment1/RandomPosition.h"
+#include "rt2_assignment2/Command.h"
+#include "rt2_assignment2/Position.h"
+#include "rt2_assignment2/RandomPosition.h"
 #include <actionlib/client/simple_action_client.h>
 #include <actionlib/client/terminal_state.h>
-#include <rt2_assignment1/PositionAction.h>
+#include <rt2_assignment2/PositionAction.h>
 
 bool start = false;
 
-bool user_interface(rt2_assignment1::Command::Request &req, rt2_assignment1::Command::Response &res)
+bool user_interface(rt2_assignment2::Command::Request &req, rt2_assignment2::Command::Response &res)
 {
     if (req.command == "start")
     {
@@ -26,11 +26,11 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "state_machine");
     ros::NodeHandle n;
     ros::ServiceServer service = n.advertiseService("/user_interface", user_interface);
-    ros::ServiceClient client_rp = n.serviceClient<rt2_assignment1::RandomPosition>("/position_server");
-    actionlib::SimpleActionClient<rt2_assignment1::PositionAction> ac("go_to_point", true);
+    ros::ServiceClient client_rp = n.serviceClient<rt2_assignment2::RandomPosition>("/position_server");
+    actionlib::SimpleActionClient<rt2_assignment2::PositionAction> ac("go_to_point", true);
 
-    rt2_assignment1::RandomPosition rp;
-    rt2_assignment1::PositionGoal goal;
+    rt2_assignment2::RandomPosition rp;
+    rt2_assignment2::PositionGoal goal;
 
     rp.request.x_max = 5.0;
     rp.request.x_min = -5.0;
