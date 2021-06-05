@@ -150,7 +150,7 @@ def go_to_point(goal):
     desired_position.x = goal.x
     desired_position.y = goal.y
     des_yaw = goal.theta
- 
+
     change_state(0)
     while True:
         _as.publish_feedback(_feedback)
