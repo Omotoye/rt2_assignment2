@@ -43,7 +43,7 @@ int main(int argc, char **argv)
     ros::Time::init();
     ros::NodeHandle n;
     ros::ServiceServer service = n.advertiseService("/position_server", myrandom);
-    ros::ServiceServer service2 = n.advertiseService("ui_target", ui_handle);
+    ros::ServiceServer service2 = n.advertiseService("/ui_target", ui_handle);
     ros::spin();
 
     return 0;
