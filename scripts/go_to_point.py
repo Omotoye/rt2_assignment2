@@ -8,6 +8,7 @@ from tf import transformations
 import actionlib
 import rt2_assignment2.msg
 import math
+import time 
 
 # robot state variables
 position_ = Point()
@@ -16,7 +17,10 @@ position_ = 0
 state_ = 0
 pub_ = None
 _as = None
-pose = None 
+pose = None
+canceled_target = 0
+reached_target = 0
+goal_time_list = []
 
 # parameters for control
 yaw_precision_ = math.pi / 9  # +/- 20 degree allowed
@@ -33,24 +37,38 @@ _feedback = rt2_assignment2.msg.PositionFeedback()
 _result = rt2_assignment2.msg.PositionResult()
 
 
+def ui_param_data(value, state):
+    global canceled_target, reached_target, goal_time_list
+    if (state == 0):
+        canceled_target += 1
+        rospy.set_param('/canceled_target', canceled_target)
+    if (state == 1):
+        reached_target += 1
+        rospy.set_param('/reached_target', reached_target)
+    if (state == 2):
+        goal_time_list.append(value) 
+        rospy.set_param('/target_time', goal_time_list)
+
+
 def check_preempt():
     # check that preempt has not been requested by the client
     if _as.is_preempt_requested():
         print('The Goal has been Preempted')
         _as.set_preempted()
+        ui_param_data(0, 0)
         done()
         return True
-    return False 
+    return False
 
 
 def clbk_odom(msg):
     global position_
     global yaw_
-    global pose 
-    
-    # position for feedback 
+    global pose
+
+    # position for feedback
     pose = msg
-    _feedback.pose = pose 
+    _feedback.pose = pose
 
     # position
     position_ = msg.pose.pose.position
@@ -152,26 +170,32 @@ def go_to_point(goal):
     des_yaw = goal.theta
 
     change_state(0)
+    start_time = time.time()
     while True:
         _as.publish_feedback(_feedback)
-        
+
         if state_ == 0:
             fix_yaw(desired_position)
             if (check_preempt()):
-                break    
+                break
         elif state_ == 1:
             go_straight_ahead(desired_position)
             if (check_preempt()):
-                break    
+                break
         elif state_ == 2:
             fix_final_yaw(des_yaw)
             if (check_preempt()):
-                break 
+                break
         elif state_ == 3:
             done()
+            end_time = time.time()
+            time_elapsed = end_time - start_time
             _result.ok = True
             _as.set_succeeded(_result)
+            ui_param_data(time_elapsed, 2)
+            ui_param_data(1,1)
             break
+
 
 def main():
     global pub_
