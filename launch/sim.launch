@@ -17,11 +17,11 @@
 
    <node name="goToPoint" pkg="rt2_assignment2" type="go_to_point.py" />
 
-   <node name="positionServer" pkg="rt2_assignment2" type="position_service" />
+   <node name="positionServer" pkg="rt2_assignment2" type="position_service_" />
 
-   <node name="stateMachine" pkg="rt2_assignment2" type="state_machine" output="screen" />
+   <node name="stateMachine" pkg="rt2_assignment2" type="state_machine_" output="screen" />
 
-<!--   <node name="userInterface" pkg="rt2_assignment2" type="user_interface.py" output="screen" /> -->
+   <!--   <node name="userInterface" pkg="rt2_assignment2" type="user_interface.py" output="screen" /> -->
 
 
 </launch>

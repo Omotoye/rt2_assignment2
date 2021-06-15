@@ -28,9 +28,28 @@ yaw_precision_2_ = math.pi / 90  # +/- 2 degree allowed
 dist_precision_ = 0.1
 kp_a = -3.0
 kp_d = 0.2
-ub_a = 0.6
-lb_a = -0.5
-ub_d = 0.6
+
+def ub_a():
+    if (rospy.has_param('/angular_velocity')):
+        av_multiplier = rospy.get_param('/angular_velocity')
+    else:
+        av_multiplier = 1
+    return (av_multiplier*0.6)
+    
+        
+def lb_a():
+    if (rospy.has_param('/angular_velocity')):
+        av_multiplier = rospy.get_param('/angular_velocity')
+    else:
+        av_multiplier = 1
+    return (av_multiplier*(-0.5))
+
+def ub_d():
+    if (rospy.has_param('/linear_velocity')):
+        lv_multiplier = rospy.get_param('/linear_velocity')
+    else:
+        lv_multiplier = 1
+    return (lv_multiplier*0.6)
 
 # create messages that are used to publish feedback/result
 _feedback = rt2_assignment2.msg.PositionFeedback()
@@ -102,10 +121,10 @@ def fix_yaw(des_pos):
     twist_msg = Twist()
     if math.fabs(err_yaw) > yaw_precision_2_:
         twist_msg.angular.z = kp_a*err_yaw
-        if twist_msg.angular.z > ub_a:
-            twist_msg.angular.z = ub_a
-        elif twist_msg.angular.z < lb_a:
-            twist_msg.angular.z = lb_a
+        if twist_msg.angular.z > ub_a():
+            twist_msg.angular.z = ub_a()
+        elif twist_msg.angular.z < lb_a():
+            twist_msg.angular.z = lb_a()
     pub_.publish(twist_msg)
     # state change conditions
     if math.fabs(err_yaw) <= yaw_precision_2_:
@@ -124,8 +143,8 @@ def go_straight_ahead(des_pos):
     if err_pos > dist_precision_:
         twist_msg = Twist()
         twist_msg.linear.x = 0.3
-        if twist_msg.linear.x > ub_d:
-            twist_msg.linear.x = ub_d
+        if twist_msg.linear.x < ub_d():
+            twist_msg.linear.x = ub_d()
 
         twist_msg.angular.z = kp_a*err_yaw
         pub_.publish(twist_msg)
@@ -145,10 +164,10 @@ def fix_final_yaw(des_yaw):
     twist_msg = Twist()
     if math.fabs(err_yaw) > yaw_precision_2_:
         twist_msg.angular.z = kp_a*err_yaw
-        if twist_msg.angular.z > ub_a:
-            twist_msg.angular.z = ub_a
-        elif twist_msg.angular.z < lb_a:
-            twist_msg.angular.z = lb_a
+        if twist_msg.angular.z > ub_a():
+            twist_msg.angular.z = ub_a()
+        elif twist_msg.angular.z < lb_a():
+            twist_msg.angular.z = lb_a()
     pub_.publish(twist_msg)
     # state change conditions
     if math.fabs(err_yaw) <= yaw_precision_2_:

@@ -1,4 +1,4 @@
-from ipywidgets import Button, GridBox, Layout, ButtonStyle
+from ipywidgets import Button, GridBox, Layout, ButtonStyle, FloatSlider
 
 up_button = Button(
     description='',
@@ -63,3 +63,13 @@ stop_button = Button(
     icon='stop',  # (FontAwesome names without the `fa-` prefix)
     layout=Layout(width='50%', height='80px')
 )
+
+a = FloatSlider(
+    value=1.0,
+    min=0.0, max=2.0, step=0.1,
+    description='Linear Velocity: ')
+
+b = FloatSlider(  value=1.0,
+    min=0.0, max=2.0, step=0.1,
+    description='Angular Velocity: ')
+
