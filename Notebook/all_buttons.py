@@ -64,12 +64,23 @@ stop_button = Button(
     layout=Layout(width='50%', height='80px')
 )
 
-a = FloatSlider(
+l_velSlider = FloatSlider(
     value=1.0,
     min=0.0, max=2.0, step=0.1,
     description='Linear Velocity: ')
 
-b = FloatSlider(  value=1.0,
+a_velSlider = FloatSlider(  value=1.0,
     min=0.0, max=2.0, step=0.1,
     description='Angular Velocity: ')
 
+control_pad = GridBox(children=[up_button,down_button,left_button,right_button, stop],
+        layout=Layout(
+            width='100%',
+            grid_template_rows='auto auto auto auto',
+            grid_template_columns='16.5% 16.5% 16.5% 16.5% 16.5% 16.5%',
+            grid_template_areas='''
+            ". up . . . . "
+            " left . right . stop ."
+            " . down . . . . "
+            ''')
+       )
