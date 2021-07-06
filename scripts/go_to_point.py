@@ -21,6 +21,7 @@ pose = None
 canceled_target = 0
 reached_target = 0
 goal_time_list = []
+target_point = []
 
 # parameters for control
 yaw_precision_ = math.pi / 9  # +/- 20 degree allowed
@@ -57,7 +58,7 @@ _result = rt2_assignment2.msg.PositionResult()
 
 
 def ui_param_data(value, state):
-    global canceled_target, reached_target, goal_time_list
+    global canceled_target, reached_target, goal_time_list, target_point
     if (state == 0):
         canceled_target += 1
         rospy.set_param('/canceled_target', canceled_target)
@@ -67,6 +68,11 @@ def ui_param_data(value, state):
     if (state == 2):
         goal_time_list.append(value) 
         rospy.set_param('/target_time', goal_time_list)
+    if (state == 3):
+        target_point.append(value)
+        if (len(target_point) == 3):
+            rospy.set_param('/target_point', target_point)
+            target_point = []
 
 
 def check_preempt():
@@ -185,8 +191,11 @@ def done():
 def go_to_point(goal):
     desired_position = Point()
     desired_position.x = goal.x
+    ui_param_data(goal.x, 3)
     desired_position.y = goal.y
+    ui_param_data(goal.y, 3)
     des_yaw = goal.theta
+    ui_param_data(goal.theta, 3)
 
     change_state(0)
     start_time = time.time()
