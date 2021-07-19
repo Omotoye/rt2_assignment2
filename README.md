@@ -15,6 +15,7 @@
 <h1> Robot Controller </h1>
 <img src="images/rviz-robotmodel.png" width="50%" height="50%" title="Two Wheeled non-holonomic robot" alt="Two Wheeled non-holonomic robot" >
 </div>
+
 This package is an update to the package contained in [First Assignment of the Reasearch Track 2 course](). To read the assignment specification [Click here](docs/assignment2.pdf).
 
 # ROS Package Description
