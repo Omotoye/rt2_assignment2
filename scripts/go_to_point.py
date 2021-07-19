@@ -1,20 +1,23 @@
 #! /usr/bin/env python
 
-"""
-.. module:: go_to_point
-    :platform: Unix
-    :synopsis: Python module for control of a mobile robot to navigate to a target point
-.. moduleauthor:: Omotoye Adekoya adekoyaomotoye@gmail.com 
-This node controls a mobile robot to move from it position to some target position
-Subscribes to:
-    /odom topic where the simulator publishes the robot position
-Publishes to: 
-    /cmd_vel velocity to move to the desired robot positions
-    
-Service:
-    /go_to_point_switch accepts a request to go to a target position 
-    
-"""
+## @package go_to_point
+# \file go_to_point.py
+# \brief Python module for control of a mobile robot to navigate to a target point
+# \author Omotoye Shamsudeen Adekoya  
+# \version 0.1
+# \date 20/07/2021
+#
+# \details
+#
+# Subscribes to: <BR>
+#   \odom topic where the simulator publishes the robot position
+#
+# Publishes to: <BR>
+#   \cmd_vel velocity to move to the desired robot positions
+#
+# Service : <BR>
+#   \go_to_point_switch accepts a request to go to a target position
+#
 
 import rospy
 from geometry_msgs.msg import Twist, Point
@@ -23,7 +26,7 @@ from tf import transformations
 import actionlib
 import rt2_assignment2.msg
 import math
-import time 
+import time
 
 # robot state variables
 position_ = Point()
@@ -34,7 +37,7 @@ pub_ = None
 _as = None
 pose = None
 
-# Initializing the variables for holding the data that'll be published in the 
+# Initializing the variables for holding the data that'll be published in the
 # parameter server for the analysis plot
 canceled_target = 0
 reached_target = 0
@@ -48,51 +51,60 @@ dist_precision_ = 0.1
 kp_a = -3.0
 kp_d = 0.2
 
-def ub_a():
-    """This is a function for increasing or decreasing the 
-    value of the angular speed the robot would move at based
-    on the value gotten from the slider in the Notebook UI
 
-    Returns:
-        [float]: value of the default speed muliplied by the 
-        multiplier set from the Notebook UI
-    """
+def ub_a():
+    ##
+    # \brief This function scales up/down the angular speed
+    # \return [float]: value of the default speed muliplied by the 
+    #    multiplier set from the Notebook UI
+    #
+    # This is a function for increasing or decreasing the 
+    # value of the angular speed the robot would move at based
+    # on the value gotten from the slider in the Notebook UI
+    #
+
     if (rospy.has_param('/angular_velocity')):
         av_multiplier = rospy.get_param('/angular_velocity')
     else:
         av_multiplier = 1
     return (av_multiplier*0.6)
-    
-        
-def lb_a():
-    """This is a function for increasing or decreasing the 
-    value of the linear speed the robot would move at based
-    on the value gotten from the slider in the Notebook UI
 
-    Returns:
-        [float]: value of the default speed muliplied by the 
-        multiplier set from the Notebook UI
-    """
+
+def lb_a():
+    ##
+    # \brief This function scales up/down the linear speed
+    # \return [float]: value of the default speed muliplied by the 
+    #    multiplier set from the Notebook UI
+    #
+    # This is a function for increasing or decreasing the 
+    # value of the linear speed the robot would move at based
+    # on the value gotten from the slider in the Notebook UI
+    #
+    
     if (rospy.has_param('/angular_velocity')):
         av_multiplier = rospy.get_param('/angular_velocity')
     else:
         av_multiplier = 1
     return (av_multiplier*(-0.5))
 
-def ub_d():
-    """This is a function for increasing or decreasing the 
-    value of the angular speed the robot would move at based
-    on the value gotten from the slider in the Notebook UI
 
-    Returns:
-        [float]: value of the default speed muliplied by the 
-        multiplier set from the Notebook UI
-    """
+def ub_d():
+    ##
+    # \brief This function scales up/down the linear speed
+    # \return [float]: value of the default speed muliplied by the 
+    #    multiplier set from the Notebook UI
+    #
+    # This is a function for increasing or decreasing the 
+    # value of the linear speed the robot would move at based
+    # on the value gotten from the slider in the Notebook UI
+    #
+    
     if (rospy.has_param('/linear_velocity')):
         lv_multiplier = rospy.get_param('/linear_velocity')
     else:
         lv_multiplier = 1
     return (lv_multiplier*0.6)
+
 
 # create messages that are used to publish feedback/result
 _feedback = rt2_assignment2.msg.PositionFeedback()
@@ -100,15 +112,17 @@ _result = rt2_assignment2.msg.PositionResult()
 
 
 def ui_param_data(value, state):
-    """This function is used for processing the value of the data
-    sent to the Notebook UI based on the state argument provided to it
-
-    Args:
-        value ([int]): This is the value to be sent to the Notebook Ui,
-        based on the state provided. 
-        state ([int]): this determines the type of data that's in the 
-        value argument. 
-    """
+    ##
+    # \brief Sends analysis data to the Notebook UI
+    # \param value [int]: This is the value to be sent to the Notebook Ui,
+    #   based on the state provided. 
+    #   state [int]: this determines the type of data that's in the 
+    #   value argument. 
+    # \return a string consisting of the state outcome
+    #
+    # This function is used for processing the value of the data
+    # sent to the Notebook UI based on the state argument provided to it
+    #
     global canceled_target, reached_target, goal_time_list, target_point
     if (state == 0):
         canceled_target += 1
@@ -117,7 +131,7 @@ def ui_param_data(value, state):
         reached_target += 1
         rospy.set_param('/reached_target', reached_target)
     if (state == 2):
-        goal_time_list.append(value) 
+        goal_time_list.append(value)
         rospy.set_param('/target_time', goal_time_list)
     if (state == 3):
         target_point.append(value)
@@ -127,13 +141,14 @@ def ui_param_data(value, state):
 
 
 def check_preempt():
-    """This is function is used for checking if a preemption has be
-    requested from the UI node. 
-
-    Returns:
-        [bool]: True if preempt is request and False otherwise. 
-    """
-    # check that preempt has not been requested by the client
+    ##
+    # \brief check that preempt has not been requested by the client
+    # \return [bool]: True if preempt is request and False otherwise. 
+    #
+    # This is function is used for checking if a preemption has be
+    # requested from the UI node. 
+    #
+    
     if _as.is_preempt_requested():
         print('The Goal has been Preempted')
         _as.set_preempted()
@@ -144,12 +159,15 @@ def check_preempt():
 
 
 def clbk_odom(msg):
-    """Callback function for handling Odometry message comming from the
-    odom topic 
-
-    Args:
-        msg ([Odometry]): The Odometry message coming from the odom topic. 
-    """
+    ##
+    # \brief Odom callback function 
+    # \param msg [Odometry]: The Odometry message coming from the odom topic. 
+    # \return a string consisting of the state outcome
+    #
+    # Callback function for handling Odometry message comming from the
+    # odom topic
+    #
+       
     global position_
     global yaw_
     global pose
@@ -252,14 +270,16 @@ def done():
 
 
 def go_to_point(goal):
-    """This is a callback function that handles the go to point action, 
-    it calls all other functions that helps it achieve the goal of getting 
-    to the goal pose. 
-
-    Args:
-        goal : This is an object that contains the target pose that the robot is
-        required to reach. 
-    """
+    ##
+    # \brief go to point action callback function
+    # \param goal : This is an object that contains the target pose that the robot is
+    #    required to reach. 
+    #
+    # This is a callback function that handles the go to point action, 
+    # it calls all other functions that helps it achieve the goal of getting 
+    # to the goal pose. 
+    #
+    
     desired_position = Point()
     desired_position.x = goal.x
     ui_param_data(goal.x, 3)
@@ -292,7 +312,7 @@ def go_to_point(goal):
             _result.ok = True
             _as.set_succeeded(_result)
             ui_param_data(time_elapsed, 2)
-            ui_param_data(1,1)
+            ui_param_data(1, 1)
             break
 
 
