@@ -13,7 +13,7 @@
 In this branch the code documentation was done with __Sphinx__;  _**for more information about the python and c++ scripts [Click Here](https://omotoye.github.io/rt2_assignment2/ "Webpage for the Docs of the script")**_
 This link will lead you to the auto generated html webpage about the description of the code. 
 For more information about the package, return to the main branch of this page or [click here](https://github.com/Omotoye/rt2_assignment2/blob/master/README.md) to view the README of the package description. [Main Branch](https://github.com/Omotoye/rt2_assignment2/)
-* To checkout the doxygen auto generated documentation, switch to the [doxygen-docs]() branch of this page. Find the index.html in _docs/html/index.html_ 
+* To checkout the doxygen auto generated documentation, switch to the [doxygen-docs](https://github.com/Omotoye/rt2_assignment2/tree/doxygen-docs) branch of this page. Find the index.html in _docs/html/index.html_ 
 <!-- 
 <div align="center">
 <h1> Robot Controller </h1>
